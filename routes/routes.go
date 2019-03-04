@@ -2,7 +2,6 @@ package routes
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"../config"
@@ -21,10 +20,7 @@ func isOwnNetwork() bool {
 }
 
 func jsonResponse(w http.ResponseWriter) {
-	var success bool = false
-	if isOwnNetwork() {
-		success = true
-	}
+	success := isOwnNetwork()
 
 	response := Response{
 		Success:  success,
@@ -39,5 +35,13 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AuthHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "From routes file")
+	jsonResponse(w)
+}
+
+func AddHandler(w http.ResponseWriter, r *http.Request) {
+	jsonResponse(w)
+}
+
+func DeleteHandler(w http.ResponseWriter, r *http.Request) {
+	jsonResponse(w)
 }
