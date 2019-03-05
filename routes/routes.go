@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"../config"
+	db "../database"
 	wifiname "github.com/yelinaung/wifi-name"
 )
 
@@ -39,6 +40,14 @@ func AuthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddHandler(w http.ResponseWriter, r *http.Request) {
+	task := db.Task{
+		Name:        "name",
+		Description: "description",
+		Active:      true,
+		Time:        1,
+	}
+
+	db.SaveTask(db.TaskEntry, task)
 	jsonResponse(w)
 }
 
