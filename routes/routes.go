@@ -43,6 +43,19 @@ var routes = Routes{
 	},
 }
 
+func authMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		auth := isOwnNetwork()
+
+		if auth == false {
+			jsonFailResponse(w)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func InitRouter() *mux.Router {
 	router := mux.NewRouter()
 	for _, route := range routes {
@@ -51,6 +64,8 @@ func InitRouter() *mux.Router {
 			Path(route.Path).
 			Handler(route.HandlerFunc)
 	}
+
+	router.Use(authMiddleware)
 
 	return router
 }

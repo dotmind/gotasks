@@ -23,16 +23,15 @@ func isOwnNetwork() bool {
 	return appConfig.WifiName == wifiname.WifiName()
 }
 
+func jsonFailResponse(w http.ResponseWriter) {
+	response := Response{Success: false}
+	json.NewEncoder(w).Encode(response)
+}
+
 func jsonResponse(w http.ResponseWriter, extra interface{}) {
-	success := isOwnNetwork()
-
 	response := Response{
-		Success: success,
-		Payload: EmptyResponse{},
-	}
-
-	if response.Success == true {
-		response.Payload = extra
+		Success: true,
+		Payload: extra,
 	}
 
 	json.NewEncoder(w).Encode(response)
