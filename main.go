@@ -6,8 +6,7 @@ import (
 
 	"./config"
 	db "./database"
-	"./routes"
-	"github.com/gorilla/mux"
+	router "./routes"
 )
 
 var appConfig = config.Load()
@@ -15,12 +14,6 @@ var appConfig = config.Load()
 func main() {
 	db.Init()
 
-	r := mux.NewRouter()
-	r.HandleFunc("/", routes.RootHandler).Methods("GET")
-	r.HandleFunc("/auth", routes.AuthHandler).Methods("GET")
-	r.HandleFunc("/getall", routes.GetAllHandler).Methods("GET")
-	r.HandleFunc("/add", routes.AddHandler).Methods("GET", "POST") // @TODO Remove GET method
-	r.HandleFunc("/delete", routes.DeleteHandler).Methods("POST")
-
+	r := router.InitRouter()
 	log.Fatal(http.ListenAndServe(appConfig.Port, r))
 }
