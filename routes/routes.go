@@ -16,14 +16,11 @@ type Route struct {
 
 type Routes []Route
 
-type ExtraResponse struct {
-	Id string `json:"id"`
-}
+type EmptyResponse struct{}
 
 type Response struct {
-	Success  bool          `json:"success"`
-	WifiName string        `json:"wifi"`
-	Payload  ExtraResponse `json:"payload"`
+	Success bool        `json:"success"`
+	Payload interface{} `json:"payload"`
 }
 
 var appConfig = config.Load()
