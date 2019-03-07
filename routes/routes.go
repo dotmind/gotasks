@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -23,6 +24,26 @@ type Response struct {
 	Payload interface{} `json:"payload"`
 }
 
+func (r Response) WithSuccess() Response {
+	r.Success = true
+	return r
+}
+
+func (r Response) WithError() Response {
+	r.Success = false
+	return r
+}
+
+func (r Response) WithPayload(payload interface{}) Response {
+	r.Payload = payload
+	return r
+}
+
+func (r Response) Send(w http.ResponseWriter) {
+	json.NewEncoder(w).Encode(r)
+	return
+}
+
 var appConfig = config.Load()
 
 var routes = Routes{
@@ -33,7 +54,7 @@ var routes = Routes{
 	},
 	Route{
 		Path:        "/add",
-		Method:      "GET", // @TODO Only for dev
+		Method:      "POST", // @TODO Only for dev
 		HandlerFunc: AddHandler,
 	},
 	Route{
@@ -48,7 +69,7 @@ func authMiddleware(next http.Handler) http.Handler {
 		auth := isOwnNetwork()
 
 		if auth == false {
-			jsonFailResponse(w)
+			Response{}.WithError().Send(w)
 			return
 		}
 

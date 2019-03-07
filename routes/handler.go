@@ -23,51 +23,44 @@ func isOwnNetwork() bool {
 	return appConfig.WifiName == wifiname.WifiName()
 }
 
-func jsonFailResponse(w http.ResponseWriter) {
-	response := Response{Success: false}
-	json.NewEncoder(w).Encode(response)
-}
-
-func jsonResponse(w http.ResponseWriter, extra interface{}) {
-	response := Response{
-		Success: true,
-		Payload: extra,
-	}
-
-	json.NewEncoder(w).Encode(response)
-}
-
 func RootHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResponse(w, EmptyResponse{})
+	Response{}.WithSuccess().Send(w)
 }
 
 func AuthHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResponse(w, EmptyResponse{})
+	Response{}.WithSuccess().Send(w)
 }
 
 func GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	_, tasks := db.GetAllTasks()
 
-	jsonResponse(w, GetAllResponse{
+	Response{}.WithSuccess().WithPayload(GetAllResponse{
 		Total: len(tasks),
 		Tasks: tasks,
-	})
+	}).Send(w)
 }
 
 func AddHandler(w http.ResponseWriter, r *http.Request) {
-	task := db.Task{
-		Name:        "name",
-		Description: "description",
-		Active:      true,
-		Time:        1,
+	decoder := json.NewDecoder(r.Body)
+
+	var task db.Task
+	err := decoder.Decode(&task)
+
+	if err != nil {
+		panic(err)
+	}
+
+	if len(task.Name) == 0 {
+		Response{}.WithError().Send(w)
+		return
 	}
 
 	_, id := db.SaveTask(task)
-	jsonResponse(w, AddResponse{
+	Response{}.WithSuccess().WithPayload(AddResponse{
 		Id: id,
-	})
+	}).Send(w)
 }
 
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResponse(w, EmptyResponse{})
+	Response{}.WithSuccess().Send(w)
 }
