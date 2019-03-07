@@ -21,15 +21,18 @@ Task:
 --
 
 *Create a new task*
+
 Route: `/add`
 Method: `POST`
 JSON Body: `Task`
 
 *Get all tasks*
+
 Route: `/getall`
 Method: `GET`
 
 *Update a task*
+
 Route: `/update`
 Method: `POST`
 JSON Body: `Task` (id required)
