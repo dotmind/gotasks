@@ -54,8 +54,13 @@ var routes = Routes{
 	},
 	Route{
 		Path:        "/add",
-		Method:      "POST", // @TODO Only for dev
+		Method:      "POST",
 		HandlerFunc: AddHandler,
+	},
+	Route{
+		Path:        "/update",
+		Method:      "POST",
+		HandlerFunc: UpdateHandler,
 	},
 	Route{
 		Path:        "/getall",

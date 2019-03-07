@@ -46,16 +46,20 @@ func generateUUID() (string, uuid.UUID) {
 	return id.String(), id
 }
 
-func SaveTask(task Task) (Database, string) {
+func NewTask(task Task) (Database, string) {
 	id, _ := generateUUID()
 	task.Id = id
 	return save(taskEntry, id, task), id
 }
 
-func GetTask(id string) (Database, Task) {
+func SaveTask(task Task) Database {
+	return save(taskEntry, task.Id, task)
+}
+
+func GetTask(id string) (Database, Task, error) {
 	task := Task{}
-	db.Read(taskEntry, id, &task)
-	return db, task
+	err := db.Read(taskEntry, id, &task)
+	return db, task, err
 }
 
 func GetAllTasks() (Database, []Task) {

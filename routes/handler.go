@@ -17,6 +17,10 @@ type (
 	AddResponse struct {
 		Id string `json:"id"`
 	}
+
+	UpdateResponse struct {
+		Task db.Task `json:"task"`
+	}
 )
 
 func isOwnNetwork() bool {
@@ -55,9 +59,35 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, id := db.SaveTask(task)
+	_, id := db.NewTask(task)
 	Response{}.WithSuccess().WithPayload(AddResponse{
 		Id: id,
+	}).Send(w)
+}
+
+func UpdateHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	var body db.Task
+	err := decoder.Decode(&body)
+
+	if err != nil {
+		panic(err)
+	}
+
+	_, task, err := db.GetTask(body.Id)
+
+	if err != nil {
+		Response{}.WithError().Send(w)
+		return
+	}
+
+	task.Description = body.Description
+	task.Active = body.Active
+	db.SaveTask(task)
+
+	Response{}.WithSuccess().WithPayload(UpdateResponse{
+		Task: task,
 	}).Send(w)
 }
 
